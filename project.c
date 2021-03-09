@@ -23,6 +23,7 @@
  ****************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <omp.h>
 #include <math.h>
 #include "hpc.h"
@@ -107,8 +108,8 @@ void generate_network(layer* ls, int N, int K){
 
 
 // Define activation function (sigmoid)
-double activation(double x){
-	return 1/(1 + exp(-x));
+void activation(double* x){
+	*x = 1/(1 + exp(-*x));
 }
 
 void kernel(layer l, double* y){
@@ -122,8 +123,11 @@ void kernel(layer l, double* y){
 		for(int j=0; j < R; ++j){
 			y[i] += (l.x[i + j] * l.W[i*R + j]); // MAC
 		}
-		y[i] = activation(y[i]);
+		activation(&y[i]);
 	}
+    // Free useless memory
+    free(l.x);
+    free(l.W);
 }
 
 // Define propagation function
@@ -195,10 +199,7 @@ int main(int argc, char* argv[])
     generate_network(ls, N, K);
 
     // Allocate memory for last output
-    int n = N;
-    for (int k=0; k<K; k++)
-    	n = n - R + 1;
-    double* output = (double*)malloc(n*sizeof(double));
+    double* output = (double*)malloc((N - K*R + K)*sizeof(double));
 
 //	printf("Performing forward pass...\n");
 	// Set the start time

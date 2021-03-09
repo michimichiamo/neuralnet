@@ -13,8 +13,8 @@
 
 echo "p\tt1\tt2\tt3\tt4\tt5"
 
-N=500000 # 1st layer inputs
-K=100 # Number of layers
+N=$1 # 1st layer inputs
+K=$2 # Number of layers
 CORES=`sysctl -n hw.ncpu` # number of cores
 
 for p in `seq $CORES`; do
