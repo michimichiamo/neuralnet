@@ -20,7 +20,7 @@ CORES=`sysctl -n hw.ncpu` # number of cores
 for p in `seq $CORES`; do
     echo "$p\t\c"
     for rep in `seq 5`; do
-        EXEC_TIME="$( OMP_NUM_THREADS=$p ./project $N $K | sed 's/Execution time //' )"
+        EXEC_TIME="$( OMP_NUM_THREADS=$p ./nn_omp $N $K | sed 's/Execution time //' )"
         echo "${EXEC_TIME}\t\c"
     done
     echo ""
