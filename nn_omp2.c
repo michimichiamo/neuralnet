@@ -105,8 +105,8 @@ void initialize_network(int K, int N, layer_t* ls[K]){
     	ls[k]->N = N - k * (R-1);
     	// Allocate memory for input array
 		ls[k]->x = (double*)malloc(ls[k]->N * sizeof(double));
-		// Set # of weights (R elements for each input neuron)
-    	int w_N = ls[k]->N * R;
+		// Set # of weights (R elements for each output neuron)
+    	int w_N = (ls[k]->N-R+1) * R;
 		// Allocate memory for weights array
   		ls[k]->W = (double*)malloc(w_N *sizeof(double));
         // Allocate memory for bias
@@ -118,8 +118,8 @@ void generate_values(int K, layer_t* ls[K]){
 
 //    printf("Generating input values, weights and biases...\n");
     for(int k=0; k<K; ++k){
-        // Set # of weights (R elements for each input neuron)
-        int w_N = ls[k]->N * R;
+        // Set # of weights (R elements for each output neuron)
+        int w_N = (ls[k]->N-R+1) * R;
         // Fill weights
         fill_array(ls[k]->W, w_N);
         // Fill bias
@@ -196,7 +196,6 @@ int main(int argc, char* argv[])
     }
 
 	// Instantiate a struct for each layer to store inputs, weights and bias
-	// (plus one to store the final output)
     layer_t** ls = malloc(K * sizeof(layer_t*));
 
 	// Set the seed

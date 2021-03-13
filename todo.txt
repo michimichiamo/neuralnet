@@ -7,6 +7,6 @@ double* x[K] = (double*)malloc(K*N*sizeof(double));
 double N[K];
 //same for b
 
-Where each of the K pointers contains N (for x, N-R+1 for W) elements (although the k-th pointer only needs N-K(R+1) elements - but we can't have different sizes).
+Where each of the K pointers contains N (for x, N-R+1 for W) elements (although the k-th pointer only needs N-K(R+1) elements - but we can't have different sizes - or maybe we can with a loop of mallocs?).
 
 - pass both structs and array data to allocate()

@@ -3,68 +3,79 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define R 3
+
 typedef struct {
    int width;
    int height;
    float* elements;
 } Matrix;
 
-__global__ void kernel(Matrix* mat){
-  int id = threadIdx.x;
-  mat->elements[id]++;
-}
-
-void allocate(Matrix* hs[2], Matrix* ds[2], int size, float* d_elements[2]){
-  for(int k=0; k<2; ++k){  
-    hs[k] = NULL;
-    hs[k] = (Matrix*)malloc(sizeof(Matrix));
-    hs[k]->height = 10;
-    hs[k]->width = 20;
-    hs[k]->elements = (float*)malloc(hs[k]->height * hs[k]->width*sizeof(float)); // initialize it all to '0'
-
-    for(int i=0; i<200; ++i){
-      hs[k]->elements[i] = (float)i;
+__global__ void kernel(float* d_data){
+    int id = threadIdx.x;
+    d_data[id]++;
+    printf("I am thread #%d: data:%f\n", id, d_data[id]);
     }
 
-    ds[k] = NULL;
-    d_elements[k] = (float*)malloc(200*sizeof(float));
+int main(int argc, char* argv[]){
 
-    // allocate the deviceMatrix and d_elements
-    cudaSafeCall(cudaMalloc(&ds[k], sizeof(Matrix)));
-    cudaSafeCall(cudaMalloc((void **)&(d_elements[k]), size));
+    float* h_data, *h_out, *d_data, *d_out;
+    h_data = (float*) malloc(3*sizeof(float));
+    h_out = (float*) malloc(3*sizeof(float));
+    cudaSafeCall(cudaMalloc((void **)&d_data, 5*sizeof(float)));
+    cudaSafeCall(cudaMalloc((void **)&d_out, 5*sizeof(float)));
+    cudaSafeCall(cudaMemset(d_data, 0, 5*sizeof(float)));
+    cudaSafeCall(cudaMemset(d_out, 0, 5*sizeof(float)));
+    
+    for(int i=0; i<3; ++i){
+        kernel<<<1,i+1>>>(d_data);
+        cudaSafeCall(cudaMemcpy(d_out+2, d_data, (i+1)*sizeof(float), cudaMemcpyDeviceToDevice));
+    }
+    
+    cudaSafeCall(cudaMemcpy(h_data, d_data, 3*sizeof(float), cudaMemcpyDeviceToHost));
+    cudaSafeCall(cudaMemcpy(h_out, d_out, 5*sizeof(float), cudaMemcpyDeviceToHost));
+    
+    for(int i=0; i<5; ++i){
+        printf("%f\t", h_data[i]);
+        printf("%f\n", h_out[i]);
+    }
+    printf("\n");
 
-    // copy each piece of data separately                                        
-    cudaSafeCall(cudaMemcpy(ds[k], hs[k], sizeof(Matrix), cudaMemcpyHostToDevice));
-    cudaSafeCall(cudaMemcpy(d_elements[k], hs[k]->elements, size, cudaMemcpyHostToDevice));
-    cudaSafeCall(cudaMemcpy(&(ds[k]->elements), &(d_elements[k]), sizeof(float*), cudaMemcpyHostToDevice));
-  }  
-}
+/*
+    float* d_data; float* h_data;
+    int R = 10, C = 15;
+    int N = R*C;
+    int size = N * sizeof(float);
 
+    h_data = (float*)malloc(size);
 
-int main(){
+    for(int i=0; i<C; ++i){
+        for(int j=0; j<R; ++j){
+            h_data[i*R + j]= (float)(i*R + j);
+            printf("%f\t", h_data[i*R + j]);
+      }
+    }
+    printf("\n");
+    // allocate device memory
+    cudaSafeCall(cudaMalloc((void **)&(d_data), size));
+    // copy host array to device                                    
+    cudaSafeCall(cudaMemcpy(d_data, h_data, size, cudaMemcpyHostToDevice));
+    
+    for(int i=0; i<3; ++i){
+        printf("%f\t", h_data[i]);
+    }
+    printf("\n");
 
-  Matrix* hs[2];
-  Matrix* ds[2];
-  float* d_elements[2];
-  int size = 200 * sizeof(float);
+    kernel<<<1,N>>>(d_data);
+    cudaDeviceSynchronize();
 
-  allocate(hs, ds, size, d_elements);  
+    cudaSafeCall(cudaMemcpy(h_data, d_data, size, cudaMemcpyDeviceToHost));
 
-  kernel<<<1,200>>>(ds[0]);
-
-  float* h_elements = (float*)malloc(200*sizeof(float));
-  cudaMemcpy(h_elements, d_elements[0], size, cudaMemcpyDeviceToHost);
-  
-
-  for(int i=0; i<3; ++i){
-    printf("%f\t", hs[0]->elements[i]);
-  }
-  printf("\n");
-  for(int i=0; i<3; ++i){
-    printf("%f\t", h_elements[i]);
-  }
-  printf("\n");
-
+    for(int i=0; i<3; ++i){
+        printf("%f\t", h_data[i]);
+    }
+    printf("\n");
+*/
 
 
 }
