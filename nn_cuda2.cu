@@ -169,17 +169,31 @@ __global__ void test(double* x){
     const int index = threadIdx.x + blockIdx.x * blockDim.x;
     x[index] = (double)index;
 }
+
+
+__device__ void myadd(double* x){
+    *x = *x+1;
+}
+
+__global__ void kk(double* y, int k){
+    int id = blockIdx.x*blockDim.x + threadIdx.x;
+    printf("I am thread #%d at it.#%d\n", id, k);
+    myadd(&(y[k]));
+}
+
 */
 
-__global__ void kernel(int* indices, double* d_x, double* d_W, double* d_b, double* d_y){
+__global__ void kernel(int k, int n, int x_start, int W_start, double* d_x, double* d_W, double* d_b, double* d_y){
 // Kernel function: compute the activations given inputs, weights and bias
-    int id = threadIdx.x;
-    printf("I am thread #%d: %d,%d,%d,%d\n",id,indices[0],indices[1],indices[2],indices[3]);
-    // Matrix multiplication
-    for(int i=0; i < indices[1]-R+1; ++i){ // Loop over output neurons
-        d_y[i] = d_b[indices[0]]; // Initialize to bias
+//    int id = threadIdx.x;
+//    printf("I am thread #%d: %d,%d,%d,%d\n",id,indices[0],indices[1],indices[2],indices[3]);
+    int x_idx, W_idx;
+    for(int i=0; i < n-R+1; ++i){ // Loop over output neurons
+        d_y[i] = d_b[k]; // Initialize to bias
         for(int j=0; j < R; ++j){
-            d_y[i] += (d_x[indices[2]+i+j] * d_W[indices[3]+i*R + j]); // MAC
+            x_idx=x_start+i+j;
+            W_idx=W_start+i*R + j;
+            d_y[i] += (d_x[x_idx] * d_W[W_idx]); // MAC
         }
         activation(&(d_y[i]));
     }
@@ -201,89 +215,18 @@ void forward(int N, int K, double* d_x, double* d_W, double* d_b, double* d_y){
         W_stop[i] = W_stop[i-1] + (N - (i+1)*(R-1))*R;
     }
 
-    // Loop over layers (except last one)
-    for(int k=0; k < K-1; ++k){
-        int idxs[4] = {k, N, x_start[k], W_start[k]};
-        printf("It. #%d:%d,%d,%d\n", idxs[0], idxs[1], idxs[2], idxs[3]);
-
-        // Compute activations and store them as input for next layer
-        //kernel<<<(N-R+1+BLKDIM-1)/BLKDIM, BLKDIM>>>(idxs, d_x, d_W, d_b, d_y);
-        kernel<<<1,1>>>(idxs, d_x, d_W, d_b, d_y);
-        cudaCheckError();
-        cudaSafeCall(cudaMemcpy(d_x+N, d_y, (N-R+1)*sizeof(double), cudaMemcpyDeviceToDevice));
-        N = N-R+1;
-        
-    }
-    // Store last activations as output
-    //kernel2<<<(N+BLKDIM-1)/BLKDIM, BLKDIM>>>(ls[K-1], output);
-    //cudaCheckError();
-}
-
-
-
-
-// Define activation function (sigmoid)
-void activationh(double* x){
-    *x = 1/(1 + exp(-*x));
-}
-
-
-void kernelh(int* indices, double* d_x, double* d_W, double* d_b, double* d_y){
-// Kernel function: compute the activations given inputs, weights and bias
-    //int id = threadIdx.x;
-//    printf("k\tN\tx_start\tW_start:\n%d\t%d\t%d\t%d\n",indices[0],indices[1],indices[2],indices[3]);
-    // Matrix multiplication
-    int x_idx, W_idx;
-    for(int i=0; i < indices[1]-R+1; ++i){ // Loop over output neurons
-        d_y[i] = d_b[indices[0]]; // Initialize to bias
-        for(int j=0; j < R; ++j){
-            x_idx=indices[2]+i+j;
-            W_idx=indices[3]+i*R + j;
-//            printf("x_idx #%d, W_idx #%d\n", x_idx, W_idx);
-            d_y[i] += (d_x[x_idx] * d_W[W_idx]); // MAC
-        }
-        activationh(&(d_y[i]));
-    }
-}
-
-// Define propagation function
-void forwardh(int N, int K, double* d_x, double* d_W, double* d_b, double* d_y){
-//  Compute activations, applying the kernel function
-//  to inputs, weights and biases of each layer, thus obtaining
-//  the activations which serve as input for the next one.
-
-    // Compute indices to retrieve each layer's input and weights
-    int x_start[K], x_stop[K], W_start[K], W_stop[K];
-    x_start[0]=0; x_stop[0]=N; W_start[0]=0; W_stop[0]=(N-R+1)*R;
-    for(int i=1; i<K+1; ++i){
-        x_start[i] = x_stop[i-1];
-        W_start[i] = W_stop[i-1];
-        x_stop[i] = x_stop[i-1] + (N - (i)*(R-1));
-        W_stop[i] = W_stop[i-1] + (N - (i+1)*(R-1))*R;
-    }
-
     // Loop over layers
     for(int k=0; k < K; ++k){
-        int idxs[4] = {k, N, x_start[k], W_start[k]};
-//        printf("It. #%d:%d,%d,%d\n", idxs[0], idxs[1], idxs[2], idxs[3]);
-
         // Compute activations and store them as input for next layer
         //kernel<<<(N-R+1+BLKDIM-1)/BLKDIM, BLKDIM>>>(idxs, d_x, d_W, d_b, d_y);
-//        for(int i=0; i<24; ++i)
-//            printf("%d\t%lf\n", i, d_x[i]);
-        kernelh(idxs, d_x, d_W, d_b, d_y);
-        memcpy(d_x+x_stop[k], d_y, (N-R+1)*sizeof(double));
-        //cudaCheckError();
-        //cudaSafeCall(cudaMemcpy(d_x+N, d_y, (N-R+1)*sizeof(double), cudaMemcpyDeviceToDevice));
+        kernel<<<1,1>>>(k, N, x_start[k], W_start[k], d_x, d_W, d_b, d_y);
+        cudaCheckError();
+        if(k<K-1){
+            cudaSafeCall(cudaMemcpy(d_x+x_stop[k], d_y, (N-R+1)*sizeof(double), cudaMemcpyDeviceToDevice));
+        }
         N = N-R+1;
-        
     }
-    // Store last activations as output
-    //kernel2<<<(N+BLKDIM-1)/BLKDIM, BLKDIM>>>(ls[K-1], output);
-    //cudaCheckError();
 }
-
-
 
 
 int main(int argc, char* argv[])
@@ -318,6 +261,8 @@ int main(int argc, char* argv[])
     h_b = (double*)malloc(b_size * sizeof(double)); // Bias
     h_y = (double*)malloc(y_size * sizeof(double)); // Output
 
+    printf("Sizes: %d,%d,%d,%d\n", x_size, W_size, b_size, y_size);
+
     // Fill with random numbers
     srand(42); // to allow replicability
     // Only first N input values must be filled (others set to 0)
@@ -336,39 +281,33 @@ int main(int argc, char* argv[])
     cudaSafeCall(cudaMemcpy(d_x, h_x, x_size * sizeof(double), cudaMemcpyHostToDevice)); // Input
     cudaSafeCall(cudaMemcpy(d_W, h_W, W_size * sizeof(double), cudaMemcpyHostToDevice)); // Weights
     cudaSafeCall(cudaMemcpy(d_b, h_b, b_size * sizeof(double), cudaMemcpyHostToDevice)); // Bias
+    cudaSafeCall(cudaMemset(d_y, 0, y_size * sizeof(double))); // Output
 
-    //cudaMemcpy(h_x, d_x, N * sizeof(double), cudaMemcpyDeviceToHost);
-    //cudaMemcpy(h_W, d_W, (N-R+1)*R*sizeof(double), cudaMemcpyDeviceToHost);
-    //cudaMemcpy(h_b, d_b, 1*sizeof(double), cudaMemcpyDeviceToHost);
 
-//    print_layer(0, N, h_x, h_W, h_b);
-    double y_before = h_x[N+1];
 	// Set the start time
     tstart = hpc_gettime();
     printf("Before\n");
 	// Forward pass: compute activations for each layer, storing the result as input for the next one
-    forwardh(N, K, h_x, h_W, h_b, h_y);
-//    forward(N, K, d_x, d_W, d_b, d_y);
+//    forwardh(N, K, h_x, h_W, h_b, h_y);
+    forward(N, K, d_x, d_W, d_b, d_y);
     // Sinchronize
-//    cudaDeviceSynchronize();
+    cudaDeviceSynchronize();
     printf("After\n");
     // Set the stop time
     tstop = hpc_gettime();
-    // Copy result to host
-//    cudaMemcpy(h_output, d_output, out_size, cudaMemcpyDeviceToHost);
     // Print execution time
     printf("Execution time %.2f\n", tstop - tstart);
 
-    //for(int k=0; k<K; ++k) print_layer(k, N, h_x, h_W, h_b);
+    // Copy result to host
+    cudaMemcpy(h_x, d_x, x_size*sizeof(double), cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_y, d_y, y_size*sizeof(double), cudaMemcpyDeviceToHost);
+    cudaFree(d_x);
+    cudaFree(d_W);
+    cudaFree(d_b);
+    cudaFree(d_y);
 
-
-    double y_true=h_b[0], y_pred=h_x[N+1];
-    for(int i=0; i<R; ++i)
-        y_true += h_x[i] * h_W[i];
-    y_true = 1/(1 + exp(-y_true));
-
-
-    printf("%lf\t%lf\t%lf\n", y_pred, y_true, y_before);
+    //print_array(h_x, x_size);
+    print_array(h_y, y_size);
 
     //write_array(output, N- K*R + K, "cuda.txt");
 
