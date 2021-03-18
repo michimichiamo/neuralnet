@@ -8,8 +8,7 @@ char* read_file(char *filename)
    int string_size, read_size;
    FILE* fptr = fopen(filename, "r");
 
-   if (fptr)
-   {
+    if (fptr){
        // Set filesize seeking for last byte of the file
        fseek(fptr, 0, SEEK_END);
        string_size = ftell(fptr);
@@ -24,8 +23,7 @@ char* read_file(char *filename)
        // Put a \0 in the last position so that buffer is a string
        buffer[string_size] = '\0';
 
-       if (string_size != read_size)
-       {
+       if (string_size != read_size){
            // If something goes wrong, free memory and set the buffer to NULL
            free(buffer);
            buffer = NULL;
@@ -33,26 +31,29 @@ char* read_file(char *filename)
 
        fclose(fptr);
     }
+    else{
+        printf("File %s not open correctly\n", filename);
+    }
+
 
     return buffer;
 }
 int main(int argc, char *argv[]){
-    char* file1;
-    char* file2;
+    char* filename1 = "cuda.txt";
+    char* filename2 = "omp.txt";
 
     if(argc>1){
-        file1 = read_file(argv[1]);
-        file2 = read_file(argv[2]);
+        filename1 = argv[1];
+        filename2 = argv[2];
     }
-    else{
-        printf("Usage: ./test <file1> <file2>\n");
-        return EXIT_FAILURE;
-    }
+
+    char* file1 = read_file(filename1);
+    char* file2 = read_file(filename2);
 
     if (file1 && file2)
     {
         char* equal = strcmp(file1, file2) == 0? "" : "not ";
-        printf("Files %s and %s are %sequal\n", argv[1], argv[2], equal);
+        printf("Files %s and %s are %sequal\n", filename1, filename2, equal);
     }
     else{
         printf("Files not read correctly\n");

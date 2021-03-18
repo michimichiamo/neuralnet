@@ -55,15 +55,31 @@ void fill_array(double* array, int n){
     for(int i=0; i<n; ++i)
         array[i] = (double) rand() / RAND_MAX;
 }
-
+/*
 __global__ void kernel(float* d_data){
     int id = threadIdx.x;
     //for(int i=0; i<2; ++i)
     d_data[id] = (float)id;
     }
-
+*/
 int main(int argc, char* argv[]){
+    int blks = 4;
+    int BLKDIM = 4;
+    int id;
+    for(int by=0; by<blks; ++by){
+        for(int bx=0; bx<blks; ++bx){
+            for(int ty=0; ty<BLKDIM; ++ty){
+                for(int tx=0; tx<BLKDIM; ++tx){
+                    id = by*blks*blks*BLKDIM + bx*blks*BLKDIM + ty*BLKDIM + tx;
+                    printf("%d  ", id);
+                }
+            }
+            printf("\n");
+        }
+    }
+    printf("\n");
 
+/*
 double* h_data, *d_data;
 h_data = (double*) malloc(3*sizeof(double));
 cudaSafeCall(cudaMalloc((void **)&d_data, 5*sizeof(double)));
@@ -76,7 +92,7 @@ for(int i=0; i<3; ++i){
     printf("%f\t", h_data[i]);
 }
 printf("\n");
-
+*/
 /*
     int K = atoi(argv[1]);
     int N = atoi(argv[2]);

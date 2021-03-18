@@ -1,0 +1,423 @@
+\documentclass[12pt,twoside,a4paper]{report}
+\usepackage[asymmetric]{geometry}
+\usepackage[english, italian]{babel}
+\selectlanguage{italian}
+\usepackage{newlfont}
+\usepackage[T1]{fontenc}
+\usepackage{selinput}
+\usepackage{color}
+\usepackage{amsmath}
+\numberwithin{equation}{section}
+\usepackage{textcomp}
+\pagestyle{headings}
+\textwidth=450pt\oddsidemargin=0pt
+\usepackage{caption}
+\captionsetup{format=hang, labelfont={bf}, figureposition=bottom, font=small} %
+\usepackage[pdftex]{graphicx}
+\usepackage{epstopdf}
+\DeclareGraphicsExtensions{.eps, .png, .pdf}
+\graphicspath{{./Immagini/}}
+\usepackage[pdfpagelabels]{hyperref}
+\usepackage{fancyhdr}
+
+\begin{document}
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+%
+%
+% UNA VOLTA FATTE LE DOVUTE MODIFICHE SOSTITUIRE "RED" CON "BLACK" NEI COMANDI \textcolor
+%
+%
+\begin{center}
+{{\Large{\textsc{Alma Mater Studiorum $\cdot$ Universit\`a di Bologna}}}} 
+\rule[0.1cm]{15.8cm}{0.1mm}
+\rule[0.5cm]{15.8cm}{0.6mm}
+\\\vspace{3mm}
+%
+% PER LA LAUREA TRIENNALE TOGLIERE "MAGISTRALE"
+%
+{\small{\bf Scuola di Scienze \\ 
+Dipartimento di Fisica e Astronomia\\
+Corso di Laurea in Fisica}}
+
+
+\end{center}
+
+\vspace{23mm}
+
+\begin{center}\textcolor{black}{
+%
+% INSERIRE IL TITOLO DELLA TESI
+%
+{\LARGE{\bf Study of the dependency of CMS Drift Tubes efficiency on the atmospheric pressure}}\\
+}\end{center}
+
+\vspace{48mm} \par \noindent
+
+\begin{minipage}[t]{0.47\textwidth}
+%
+% INSERIRE IL NOME DEL RELATORE CON IL RELATIVO TITOLO DI DOTTORE O PROFESSORE
+%
+{\large{\bf Relatore: \vspace{2mm}\\\textcolor{black}{
+Dott. Luigi Guiducci}\\\\
+%
+% INSERIRE IL NOME DEL CORRELATORE CON IL RELATIVO TITOLO DI DOTTORE O PROFESSORE
+%
+% SE NON AVETE UN CORRELATORE CANCELLATE LE PROSSIME 3 RIGHE
+%
+\textcolor{black}{
+\bf Correlatore:
+\vspace{2mm}\\
+Dott. Francesca R. Cavallo\\\\}}}
+\end{minipage}
+%
+\hfill
+%
+\begin{minipage}[t]{0.47\textwidth}\raggedleft \textcolor{black}{
+{\large{\bf Presentata da:
+\vspace{2mm}\\
+%
+% INSERIRE IL NOME DEL CANDIDATO
+%
+Michele Iannello}}}
+\end{minipage}
+
+\vspace{40mm}
+
+\begin{center}
+%
+% INSERIRE L'ANNO ACCADEMICO
+%
+Anno Accademico \textcolor{black}{ 2017/2018}
+\end{center}
+
+\end{titlepage}
+\newpage\null\thispagestyle{empty}\newpage
+\begin{abstract}
+L'efficienza dei Drift Tubes di CMS è costantemente monitorata per verificare l'eventuale presenza di segnali di invecchiamento delle camere.
+Durante il 2017 e il 2018 non sono stati evidenziati chiari segnali di invecchiamento, ma si sono osservate variazioni inattese.
+In questa tesi è stata cercata una eventuale dipendenza dell'efficienza di singolo hit dalla pressione atmosferica, ritenuta possibile nel rivelatore a gas.
+Dai dati analizzati non è emersa una relazione chiara, indicando che le cause delle variazioni debbano essere ricercate altrove.
+\end{abstract}
+\selectlanguage{english}
+\newpage\null\thispagestyle{empty}\newpage
+\tableofcontents
+
+\newpage\null\thispagestyle{empty}\newpage
+\addcontentsline{toc}{chapter}{Introduction}
+\chapter*{Introduction}
+During 2017 and 2018 the Drift Tubes hit efficiency underwent unexpected and not yet understood variations. The hypothesis of chamber aging was quickly dismissed, but no other explanation has been found yet.
+The present work reports a research for a dependency of the efficiency on the atmospheric pressure.
+Chapter \ref{ch:LHC} outlines the major features of the Large Hadron Collider and describes the upgrade plans for the future, pointing out the need of this study in view of the impending changes.
+In Chapter \ref{ch:CMS} a closer look at the Compact Muon Solenoid experiment is given, along with a detailed description of the Drift Tubes sub-detector and its functioning.
+Chapter \ref{ch:aging} goes deeply into the study of efficiency, outlining the hypothesis behind the research for a dependence on atmospheric pressure. Furthermore, it gives details about the data analysis, the encountered issues alongside with the measures taken to solve them, and the results of the study.
+
+
+\newpage\null\thispagestyle{empty}\newpage
+\chapter{LHC and High Luminosity-LHC}
+\label{ch:LHC}
+\section{The Large Hadron Collider}
+
+The \textbf{Large Hadron Collider} (LHC) is a p-p collider built between 2002 and 2010 by the European Organization for Nuclear Research (CERN) and placed in a 27 km long undergroung circular tunnel near Geneva.
+LHC can accelerate either proton beams or heavy-ion beams. In the first case at the moment it reaches a center-of-mass energy of 13 TeV. 
+
+The proton injection is done employing pre-existing acclerators, comprising the Linac (Linear Accelerator), the PSB (Proton Synchrotron Booster), the PS (Proton Synchrotron), and the SPS (Super Proton Synchrotron). Given all these steps an injection energy at LHC of 450 GeV is reached. The LHC beam filling requires about two hours. The beam lifetime is about 22 hours, however the data is usually taken only in the first 10 hours, then the beams are dumped and a new fill is started in order to restart at maximum beam intensity to maximize the integrated luminosity collected by the detectors.
+The two proton beams run in separate beam pipes. In order to keep them in a approximately circular orbit, their trajectory is bent using compact twin-bore superconducting magnets reaching a magnetic field of 8.3 T, cooled at 2.1 K with superfluid helium.
+The beams have a bunched structure (about $N = 1.1 \times 10^{11}$ protons per bunch) with a crossing frequency of $\nu = 40\ \mathrm{MHz}$, corresponding to a time between collisions of $\tau = 25\ \mathrm{ns}$.
+There are four interaction points, where detectors are located: ATLAS (A Toroidal LHC ApparatuS) and CMS (Compact Muon Solenoid) are general purpose detectors, ALICE (A Large Ion Collider Experiment) focuses on the heavy ions physics and on the study of the quark-gluon plasma, and LHCb (LHC beauty experiment) studies the CP violation in b-physics.
+
+\section{HL-LHC: the Upgrade plan}
+The High-Luminosity Large Hadron Collider (HL-LHC) project aims to enhance the performance of the LHC in order to increase the potential for discoveries after 2025. Since the possibility of upgrading the LHC beam energy seems unlikely with the present technology, the upgrade plan targets the increase in luminosity. The objective is to increase \textbf{luminosity} ($L$) by a factor 10 beyond the LHC’s design value of $10^{34}\ \mathrm{cm^{-2}s^{-1}}$.
+\begin{figure}[!htb]
+\includegraphics[width=\textwidth]{lhc_schedule.pdf}
+\caption{\label{fig:planning} An overview of the LHC planning from 2015 onwards. LS3, scheduled to last from 2024 to mid 2026, will see the main preparation of the accelerator and of the experiments for HL-LHC, while certain aspects of these upgrades (e.g. the upgrade of the LHC injector complex) will already happen during LS2.}
+\end{figure}
+
+\subsection{Luminosity}
+\textbf{Luminosity} is an important indicator of the performance of an accelerator: it is proportional to the number of collisions that occur in a given amount of time. The higher the luminosity, the more data the experiments can gather to allow them to observe rare processes.
+Luminosity is defined as the ratio of the number $N$ of events in a certain time $t$ to the interaction cross-section $\sigma$
+\begin{equation}
+L = \frac{1}{\sigma}\frac{dN}{dt}
+\end{equation}
+and is usually expressed in the cgs units of $ \mathrm{cm}^{-2}\mathrm{s}^{-1} $ or the non-SI units of $\mathrm{b}^{-1}\mathrm{s}^{-1}$.
+\begin{figure}[!htb]
+\begin{center}
+\includegraphics[width=\textwidth]{peak_int_lumi.pdf}
+\caption{\label{fig:peak_int_lumi} Peak instantaneous luminosity on a day-by-day basis in 2018 (left) and cumulative luminosity versus day delivered to CMS during stable beams for pp collisions at nominal center-of-mass energy (right). This is shown for data-taking in 2010 (green), 2011 (red), 2012 (blue), 2015 (purple), 2016 (orange), 2017 (light blue), and 2018 (navy blue). These plots use the best available offline calibrations for each year. \cite{lumi_results}}
+\end{center}
+\end{figure}
+As we can see from the definition, luminosity isn’t strictly speaking the collision rate: it measures how many particles are squeezed through a given space in a given time. That doesn’t mean that those particles will all collide, but the more they are squeezed into a given space, the more likely they are to collide.
+It's possible to obtain a well-known expression for the luminosity of two Gaussian beams colliding head-on:
+\begin{equation}
+L = \frac{N_{1}N_{2}fN_{b}}{4\pi\sigma_{x}\sigma_{y}}
+\end{equation}
+Where $N_{1}$ and $N_{2}$ are the number of particles per bunch, f is the revolution frequency, and $N_{b}$ is the number of bunches in one beam.
+It shows how the luminosity depends on the number of particles per bunch and the beam sizes.
+A related quantity is \textbf{integrated luminosity} ($L_{int}$), which is the integral of the luminosity with respect to time
+\begin{equation}
+L_\mathrm{int} = \int L \ dt
+\end{equation}
+and gives information about the total radiation that has travelled through the accelerator. This information is important because of the effects of the radiation on the materials that make up the detector.
+
+From here on, we will refer to $L$ as \textit{instantaneous luminosity}, in order to better distinguish it from $L_{int}$.
+
+\subsection{LHC and HL-LHC}
+Already in 2017, LHC was able to provide a peak instantaneous luminosity beyond the design value, reaching up to $2 \times 10^{34}\ \mathrm{cm^{-2}s^{-1}}$ (Figure \ref{fig:peak_int_lumi}).
+Nevertheless, CMS detector and its reconstruction software were optimized for track multiplicities and background levels not too far from the design luminosity. Thus, the LHC operation team implemented a technique called lumi-leveling. At the beginning of each proton fill, the beam focusing and separation at the interaction region is adjusted to achieve a maximum luminosity of about $2 \times 10^{34}\ \mathrm{cm^{-2}s^{-1}}$, and continuously adjusted while the beam intensity decreases to maintain such luminosity value constant. When the beam intensity has decreased sufficiently, the beams collide again with the optimal setup and the typical exponential decay of the instantaneous luminosity is observed for the rest of the fill.
+\begin{figure}[!htb]
+\includegraphics[width=\textwidth]{HL_LHC_schedule.png}
+\caption{\label{fig:hl_planning} The long-term HL-LHC planning. \cite{hi_lumi}}
+\end{figure}
+During the second Long Shutdown (LS2), started at the end of year 2018, the injector chain will be upgraded. In 2023 LS3 will begin: it will lead to the HL-LHC era (High Luminosity LHC) or Phase II, during which the luminosity could reach a peak value of $2 \times 10^{35}\ \mathrm{cm^{-2}s^{-1}}$ and is planned to be leveled at $5 \times 10^{34}\ \mathrm{cm^{-2}s^{-1}}$.
+
+\newpage
+\chapter{The CMS Experiment}
+\label{ch:CMS}
+\section{The Compact Muon Solenoid}
+The Compact Muon Solenoid (CMS) experiment is a general purpose detector and has been built in order to detect and measure leptons with high momentum in the transverse plane with respect to the proton beams axis. Composed by a cylindrical barrel and two endcaps, it is 21.6 m long, 15 m wide and 12500 tons heavy.
+Located at one of the four beam intersection points of the accelerator, CMS has a layered structure: from the interaction point outwards, it is composed of:
+\begin{itemize}
+\item the tracker, designed to achieve a high resolution track reconstruction
+\item an electromagnetic calorimeter and a hadronic calorimeter, providing energy measurements on electrons, photons, and hadronic jets
+\item a solenoid magnet, generating a 3.8 T magnetic field inside the detector
+\item the muon detectors (CSC, RPC, DT), redundantly providing muon tracks detection with high performance
+\item an iron yoke, that acts as an absorber for the traversing particles and hosts and mechanically supports the muon stations.
+\end{itemize}
+
+As muons are low-interacting (i.e. high-penetrating) particles, they are not stopped by any of CMS's calorimeters, unlike most particles. Hence muons detection chambers are placed at the edge of the experiment, that only muons manage to reach.
+A muon must pass tens of detection units, which provide the necessary redundancy for an accurate measurement of its momentum and trajectory.
+\begin{figure}[!htb]
+\includegraphics[width=\textwidth]{cms_detector_2.pdf}
+\caption{\label{fig:cms} The structure of the CMS detector}
+\end{figure}
+
+In CMS a right-handed coordinate system is defined: the x-axis points to the center of the accelerator ring, the y-axis points upwards, and the z-axis is parallel to the beam pipe and the solenoid magnetic field. Beside these coordinates, two angles are defined: the polar angle $\theta$ with respect to the z-axis and the azimutal angle $\phi$ with respect to the y-axis.
+An ultra-relativistic approximation ($|\vec{p}^{\,}| \gg m$) of the rapidity y, known as pseudorapidity $\eta$, is also introduced to replace in most cases the polar angle:
+$$y = \frac{1}{2} \mathrm{ln} \left(\frac{E+p_{z}}{E-p_{z}}\right) \approx \eta =\frac{1}{2} \mathrm{ln} \left(\frac{|\vec{p}^{\,}|+p_{z}}{|\vec{p}^{\,}|-p_{z}}\right) = -\mathrm{ln tan} \frac{\theta}{2} $$
+where E is the energy, $\vec{p}^{\,}$ is the 3-momentum, and $p_{z}$ is the component along the z-axis of a particle.
+
+\section{Muon Detectors}
+CMS uses three types of muon detectors: \textit{Drift Tubes} (DT), \textit{Cathode Strip Chambers} (CSC), and \textit{Resistive Plate Chambers} (RPC). DTs are designed to carry out precise trajectory measurement and are placed in the central barrel region ($\eta < 1.2$) characterized by low occupancy, low background, and low residual magnetic field. CSCs are used in the end caps ($0.9 < \eta < 2.4$), where rate, background noise, and magnetic field are higher. RPCs provide a fast signal when a muon crosses the muon detector, and they are installed in both the barrel and the end caps ($\eta < 2.1$).
+
+\begin{figure}[!htb]
+\includegraphics[width=\textwidth]{cms_section.png}
+\caption{\label{fig:cms_section} CMS detector longitudinal (left) and transverse (right) views.}
+\end{figure}
+
+\section{Drift Tubes}
+DTs are used for the barrel of the CMS muon system because of the large dimensions of the surface to be covered. The CMS regions inside the return yoke of the magnet have the lowest particle rate and radiation doses.
+
+\subsection{DT Cell}
+
+The basic detector element of the DT muon system is a \textbf{Drift Tube Cell} of dimensions $42\ \mathrm{mm} \times 13\ \mathrm{mm}$, whose section is shown in Figure \ref{fig:tube}.
+\begin{figure}[!htb]
+\includegraphics[width=\textwidth]{drift_cell.pdf}
+\caption{\label{fig:tube} The layout of a Drift Tube cell}
+\end{figure}
+Each cell is filled with gas and has a stainless steel anode wire in the middle, with diameter 50\ \textmu m and length varying from 2 to 3 m. A layer of cells is obtained by two parallel aluminum planes within which a series of "\textbf{I}"-shaped aluminum beams -- 1.2 mm thick and 9.6 mm high -- define the boundaries among adjacent cells. Aluminum strips, deposited on both faces of each I-beam and electrically isolated from the I-beam body using Mylar tape, serve as cathodes. Anode wires and cathode strips are put at positive and negative voltage respectively, and provide the electric field within the cell volume.
+A muon (or any charged particle) crossing the cell ionises the gas within it, releasing electrons that will move accordingly to the electric field, that is towards the anode wire. This signal is amplified directly proportionally to the electric potential difference $\Delta \mathrm{V}$ between the wire and the strip and generates an electron avalanche that produces on the wire a current intensity.
+%\begin{equation}
+%I_{avalanche} \propto n e f A
+%\end{equation}
+%where $n$ is the number of electrons contained in the avalanche, $e$ is the electron charge, $f$ is the rate of tracks crossing the cell and A is an amplification term due to $\Delta \mathrm{V}$.
+The production of multiple avalanches starting from different electrons has the following effect: the first avalanche that releases charge on the wire produces an electric field that slows further avalanches down, thus yielding a non-additive relation for the current.
+
+The signal is then discriminated by the Front-End (FE) electronics for further time digitization: a threshold voltage of 20 mV (30 mV before) is needed. The distance of the traversing track to the wire is thus measured by the drift time of ionization electrons; for this purpose, two additional positively-biased strips are mounted on the aluminum planes (with an insulator in between) on both inner surfaces in the center of the cell itself, just in correspondence of the anode wire, in order to provide additional field shaping to improve the space-to-distance linearity over the cell (which is crucial for triggering purposes). Nominal voltages are $+3600\ \mathrm{V}, +1800\ \mathrm{V}\ \mathrm{and} -1200\ \mathrm{V}$ for wires, strips, and cathodes respectively. The cells are filled with a 85\%/15\% gas mixture of Ar/$\mathrm{CO}_{2}$, which provides good quenching properties and saturated drift velocity with a value of $V_{drift} \approx 55$ \textmu m/ns. Thus, a maximum drift time (half-cell drift distance) of $\sim 380\ \mathrm{ns}$ or 15-16 BX is obtained.
+
+\subsection{Detector Structure}
+
+Drift cells are assembled in \textit{layers}, consisting of up to 60 cells. Four layers are assembled together to form a quadruplet called \textit{superlayer} (SL), with neighbouring planes staggered by half a tube, allowing to resolve the left-right ambiguity of a single layer. Each DT \textit{chamber}, on average $2\ \mathrm{m} \times 2.5\ \mathrm{m}$ in size, is composed of 3 superlayers, two of which are devoted to the position measurement in the bending plane (\textit{r},$ \phi$) (the wires are parallel to the beam line), and one to the measurement of the z-coordinate in the longitudinal plane ($\theta$, \textit{z}) (the wires are disposed orthogonally to the z-direction). Chambers are arranged in 4 concentric cylinders -- called \textit{stations} -- at growing distance from the interaction point, and interleaved with the iron of the yoke. Each chamber is azimutally staggered with respect to the  inner one, in order to maximize the geometrical acceptance. Each station consists of 60 \textit{chambers}, with the exception of the outermost station MB4, whose top and bottom sectors are equipped by two chambers each (instead of one only), thus yielding a total of 70 chambers in that station. Moreover, MB4 lacks the SL in the $\theta$-view.
+The entire DT system is segmented in 5 \textit{wheels} along the z direction, each about 2.5 m wide and divided into 12 azimuthal \textit{sectors}, covering $\sim 30^\circ$ each. The overall CMS detector is thus equipped with a total of 250 DT chambers and a resulting total number of cells of $\sim$ 173500.
+
+A cross-sectional view of a muon chamber is shown in Figure \ref{fig:station}.
+\begin{figure}[!htb]
+\includegraphics[width=\linewidth]{station.eps}
+\caption{\label{fig:station} The cross section of a DT chamber}
+\end{figure}
+
+\subsection{Segment reconstruction}
+Each of the 250 chambers is equipped with a minicrate, hosting the local trigger and readout logic. The local trigger logic is able to identify the parent \textbf{bunch crossing} (BX) and to measure the direction and the position of particle tracks crossing the chamber.
+A track crossing the detector produces a time signal in each cell, i.e. the electron avalanche drift time $t_{drift}$. This information is then converted in a lenght through the relation $x_{drift} = v_{drift} \times t_{drift}$, assuming a linear spacetime relation, i.e. a constant velocity along the cell.
+Data collected from groups of neighboring cells are then calibrated and fitted over layers and superlayers in both the $\phi$- and the $\theta$-views.
+Each \textit{Bunch and Track Identifier} (BTI) is connected to 9 cells of the same superlayer and assigns position, radial angle and parent BX to each track. These groups of cells partially overlap (having 5 common cells) to improve efficiency.
+Segments are produced when at least three cells with aligned hits are found, but high quality segments are produced by up to 8 aligned hits.
+Local track segments are collected by the TwinMux system and delivered to reconstruction processors, that correlate segments from different chambers to enhance the muon identification and measurement. The reconstructed muon candidates are assigned physical parameters, such as the transverse momentum and the azimuthal angle. The final selection of the candidates that originated in the barrel region is applied by the Muon Sorter system. The ghost tracks background is reduced and muon candidates are selected according to the reconstruction quality and the transverse momentum, and delivered to the global modules of the Level-1 trigger, where the final decision whether to store the event or to reject it is taken. \cite{PhD}
+
+%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\chapter{Monitoring DT Efficiency}
+\label{ch:aging}
+In order to prepare for \textit{Phase II} (HL-LHC), Drift Tubes efficiency needs to be studied to make clear if and how it is going to decrease due to the increase of luminosity involved by the Upgrade. As discussed in Section 1.2, luminosity is expected to increase by a factor 5 with respect to the present situation.
+As we shall see shortly, the efficiency is likely to be affected by luminosity both instantaneously and at long-term, because of the effects of instantaneous luminosity and integrated luminosity respectively.
+First of all, it is necessary to give some additional information about the drift cells to understand these effects.
+
+\section{Drift Tubes: some additional information}
+\label{sec:dt}
+
+The efficiency may be affected by an increase of luminosity in two ways:
+\begin{itemize}
+\item the greater the \textbf{instantaneous luminosity} ($L$), the higher the expected rate of undetected muons due to the DT cells dead time
+\item the more time passes, the greater the \textbf{integrated luminosity} ($L_{int}$), thus greater the effects of the radiation on the materials.
+\end{itemize}
+
+\subsection{Dead time}
+Present time-to-digital converter, the HPTDC, has a dead time of 100 ns. On chamber trigger electronics runs an algorithm that has an intrinsic dead time equal to the maximum drift time, about 400 ns. As a consequence, the local trigger efficiency is expected to lower as the rate of collisions rises beyond a certain value. Phase II Upgrade is going to reduce this dead time, so this problem will be mitigated, but not completely eliminated.
+
+\subsection{Wire impurities}
+The radiation running through the detector causes a phenomenon called outgassing: the materials, such as glue and plastic, release molecules that can stick to the anode wires. As a result, the actual diameter of the wires increases, and their electric conducibility decreases, both effects producing an alteration of both the shape and the intensity of the electric field in the cells.
+Hence the efficiency is expected to lower over time as the impurities pile up, because electrons produced by ionization produce less amplified avalanches, which are less likely to generate an electric charge exceeding the threshold of the Front-End.
+
+\subsection{HV lowering in 2017 and 2018}
+Until 2016, all chambers worked at the anode wire nominal voltage of $\mathrm{HV}= +3600$ V. At the beginning of 2017, the HV of the chambers most exposed to radiation was lowered in order to decrease speed of aging and extend their lifetime. A further reduction was performed in 2018, and involved many more chambers. As a consequence, the electron avalanche amplification is decreased, thus producing signals that are less likely to exceed the FE threshold. To recover efficiency, at the beginning of 2018 the threshold was lowered as well from 30 mV to 20 mV.
+Figure \ref{fig:chamberHV} shows both the modified configurations.
+\begin{figure}[!htb]
+\includegraphics[width=\linewidth]{chamberHV.png}
+\caption{\label{fig:chamberHV} Chambers HV in 2017 at 30mV (left) and in 2018 at 20 mV (right). \cite{hit_eff}}
+\end{figure}
+
+\subsection{Efficiency computation}
+The DT hit efficiency is computed using segments of at least 7 aligned hits, which are used as \textit{probes}. This large number of hits is required to ensure high-quality segment reconstruction. Given a probe, we look for hits in the expected cell of the eighth layer. The crossed cell is considered efficient if a hit is found within it and within the drift time range. The efficiency of this layer is then computed as the ratio of the number of hits in the layer over the number of probes that cross it.
+The efficiency can be computed by chamber, by superlayer, by layer or even by cell, provided the necessary amount of data.
+
+\section{Dependency of efficiency on High Voltage}
+\label{sec:HV_I}
+The best framework to monitor efficiency versus time is the dependency of efficiency on the voltage applied to the anode wires, studied through the so called High-Voltage (HV) scans. These are data collected varying the HV of wires of a single layer per chamber (the same in each chamber) during LHC technical stops, when the only particles crossing the detector are cosmic rays.
+\begin{figure}[!htb]
+\includegraphics[width=\textwidth]{HVScans/Wh0.pdf}
+\caption{\label{fig:HVScans_Wh0} Summary of HV scans performed in 2017 (at a FE threshold of 30mV) and 2018 (at both 20mV and 30mV). Results for stations MB1 and MB4 of wheel 0 are shown.}
+\end{figure}
+The hit efficiency of this layer is then computed as $N_{hits}/N_{segm}$, where $N_{hits}$ is the number of hits in the layer and $N_{segm}$ is the number of 7-hits segments found by the other layers, as discussed in Section \ref{sec:dt}.
+The voltage drop of a single layer (instead of all of them) does not affect the \textit{probes} reconstruction, which are still high-quality segments reconstructed starting from the 7 aligned hits provided by the layers at nominal voltage.
+
+\begin{figure}[!htb]
+\begin{center}
+\includegraphics[scale=0.4]{HVScans/Wh-2.pdf}
+\includegraphics[scale=0.4]{HVScans/Wh2.pdf}
+\caption{\label{fig:HVScans_Wh-2_2} Summary of HV scans performed in 2017 (at a FE threshold of 30mV) and 2018 (at both 20mV and 30mV). Results for stations MB1 and MB4 of external wheels -2 and 2 are shown.}
+\end{center}
+\end{figure}
+Some examples of HV Scans are shown in figures \ref{fig:HVScans_Wh0} for YB0 and \ref{fig:HVScans_Wh-2_2} for wheels -2, 2, the most exposed to radiations.
+In order to ensure good performance, the operation point is always set well within the "\textit{plateau}" region.
+For this reason, the effects of possible aging are not immediately visible at the nominal voltage of 3600 V. In fact, looking at Figures \ref{fig:HVScans_Wh0} and \ref{fig:HVScans_Wh-2_2}, it can be noticed that a small variation (e.g. $\Delta \mathrm{V} = -50\ \mathrm{V}$) produces little or no difference in efficiency nearby the nominal voltage, while at lower voltages (e.g. 3500 V), where the slope is steeper, the same variation produces a bigger effect.
+
+\begin{figure}[!htb]
+\begin{center}
+\includegraphics[scale=0.55]{Efficiency_trend.pdf}
+\caption{\label{fig:Efficiency_trend} Percentage variation of efficiency at HV = 3400 V, chamber by chamber, for stations MB1 and MB4, between beginning and end 2018 (top) and between end 2017 and beginning 2018 (bottom).}
+\end{center}
+\end{figure}
+
+Aging effects would therefore appear first as displacements of the HV scan curves, more easily visible at voltages lower than nominal. Monitoring detector efficiency by repeating the HV scans at the beginning and at the end of each data taking period provides information to spot early hints of aging, so that adequate measures can be taken to avoid further losses.
+Figures \ref{fig:HVScans_Wh0} and \ref{fig:HVScans_Wh-2_2} show results of HV scans performed at the beginning and at the end of both 2017 and 2018 data taking . Since in 2018 the FE threshold was lowered by 10 mV, the scan was repeated with 30 mV threshold to ease comparison with the previous year.
+
+No clear effect of aging was observed. However, the plots show variations of efficiency significantly larger than the statistical errors.
+Figure \ref{fig:Efficiency_trend} shows the percentage variations observed chamber by chamber between two pairs of HV scan data samples. If the decrease along 2018 could be interpreted as a hint of aging, there is no simple explanation for the apparent increase observed during the winter shut-down 2017/2018.
+
+\section{Effects of atmospheric pressure}
+\begin{figure}[!htb]
+\includegraphics[width=\linewidth]{Atmospheric_pressure_trend_in_2017.pdf}
+\caption{\label{fig:pressure_17} Atmospheric pressure trend in 2017}
+\end{figure}
+\begin{figure}[!htb]
+\includegraphics[width=\linewidth]{Atmospheric_pressure_trend_in_2018.pdf}
+\caption{\label{fig:pressure_18} Atmospheric pressure trend in 2018}
+\end{figure}
+
+In order to explain the inconsistency of results of the repeated HV scans, a dependence of efficiency on atmospheric pressure has been conjectured.
+The main reason behind this hypothesis is that the gas within the DT chambers is kept at atmospheric pressure, so that external variations can indeed affect their behaviour. Correlations of currents drawns by the anode wires were actually shown long time ago and are well understood.
+However, the dependence of currents on pressure is continuous, while the hit efficiency derives from a discrimination process. In fact, whereas the variations in the electric charge released on the wires are continuous, the FE electronics only distinguishes if a signal is higher or lower than the threshold, thus removing information about fluctuations far off the threshold.
+
+The first step of the work was to access the information provided by dedicated monitors placed in the experimental cavern, which measure the atmospheric pressure at regular time intervals. Decoding this information allowed us to look at the overall behaviour of atmospheric pressure along years 2017 and 2018, as shown in Figures \ref{fig:pressure_17} and \ref{fig:pressure_18}. This information was then used to choose the most suitable datasets to perform the next study: in fact, we needed a range of pressure values as wide as possible.
+
+In order to assign a pressure value to each CMS event, we relied on the \textit{timestamp}, that is recorded event by event. The timestamp is a 19 digit integer, providing the time elapsed from January 1st 1970 with accuracy of 1 \textmu s.
+After properly decoding the timestamp and converting it in the same time zone as the pressure data, we divided the total data sample in bins of atmospheric pressure and computed bin by bin the hit efficiency, applying the method described in Section \ref{sec:dt}.
+
+%Unfortunately, 2017 data were not available for this research, so we restricted the study to 2018 only.
+
+\subsection{Cosmic ray runs at nominal voltage}
+In 2018 \textit{Proton physics runs} were performed between end of April and middle October, covering a relatively narrow range of atmospheric pressure ($\sim 945 \div 975$ mbar). In order to access a wider range of pressures ($\sim 940 \div 990$ mbar) and make a possible trend more visible, we decided to consider instead cosmic rays data, collected from the beginning to the end of the year. The main drawback of this choice is that these data are usually collected in less stable conditions, due to the many tests conducted at CMS during the technical stops.
+%The main drawback of this choice is that Cosmic Rays offer a lower rate of tracks, thus producing a \textcolor{red}{lower} statistics.
+
+The analysis was conducted using ROOT - \textit{Data Analysis Framework} software, developed by CERN. \cite{root} The total amount of events analyzed is around 11 millions, providing sufficient statistics. These data were stored in \texttt{.root} files containing organized structures (\textit{Trees}) that store all the relevant information.
+
+Figures \ref{fig:Cosmics_MB1_MB2} -- \ref{fig:Cosmics_MB3_MB4} show the outcome of cosmic rays data analysis.
+The results are shown separately for different stations (MB), wheels and views ($\theta, \phi$).
+
+No trend of hit efficiency with atmospheric pressure is visible in these plots.
+
+\begin{figure}[!htb]
+\includegraphics[width=\textwidth]{Cosmics/MB1_MB2_.pdf}
+\caption{\label{fig:Cosmics_MB1_MB2} Hit efficiency at different atmospheric pressure for MB1 (top) and MB2 (bottom) in the bending plane (\textit{r},$ \phi$) (left) and in the longitudinal plane ($\theta$, \textit{z}) (right). Data were collected from January to November 2018.}
+\end{figure}
+
+\begin{figure}[!htb]
+\includegraphics[width=\textwidth]{Cosmics/MB3_MB4_.pdf}
+\caption{\label{fig:Cosmics_MB3_MB4} Hit efficiency at different atmospheric pressure for MB3 (top) and MB4 (bottom) in the bending plane (\textit{r},$ \phi$) (left) and in the longitudinal plane ($\theta$, \textit{z}) (right). Data were collected from January to November 2018.}
+\end{figure}
+
+\subsection{Cosmic rays HV Scans}
+As discussed in section \ref{sec:HV_I}, at nominal voltage the efficiency is well within the \textit{plateau}, therefore it tends to be stable with respect to small variations of both HV and other parameters, as the atmospheric pressure.
+In order to make the analysis more sensitive to variations of atmospheric pressure, we decided to exploit the full available dataset of the HV scan runs.
+These data were collected during 2018 with a FE threshold of both 20 mV and 30 mV, in order to compare them to previous year data.
+
+Searching for a dependency of hit efficiency on both HV and pressure required the creation of two-dimensional histograms.
+The information on the HV corresponding to each run was retrieved from a database and stored in a file which was used as input for the analysis, in order to assign event by event the proper bin of pressure and HV.
+
+Data recorded with 20 mV and 30 mV threshold amounted to 5 million and 6 million events respectively, and they were kept apart in the analysis. 
+In order to exploit as much as possible the available statistics, we decided to sum up hits of the different wheels, assuming that cosmic data have little or no $z$-dependence.
+The layer that underwent the HV scan was layer 1 of superlayer 3, which is devoted to measurements on the $\phi-view$. This means that no effects is expected in the $\theta$-view.
+Results are shown in Figures \ref{fig:Cosmics_HV_20} and \ref{fig:Cosmics_HV_30}.
+Different stations are taken apart, in particular for the MB4 the top and bottom sectors were investigated separately, considering the $\phi$ asymmetry of cosmic rays. 
+
+\begin{figure}[!htb]
+\begin{center}
+\includegraphics[scale=0.6]{CosmicHVScans_20mV.pdf}
+\caption{\label{fig:Cosmics_HV_20} Hit Efficiency plotted for different values of both atmospheric pressure and HV (of L1 SL3) for MB1, MB2, MB3 and MB4 (all wheels) with a FE threshold of 20 mV. }
+\end{center}
+\end{figure}
+
+\begin{figure}[!htb]
+\begin{center}
+\includegraphics[scale=0.6]{CosmicHVScans_30mV.pdf}
+\caption{\label{fig:Cosmics_HV_30} Hit Efficiency plotted for different values of both atmospheric pressure and HV (of L1 SL3) for MB1, MB2, MB3 and MB4 (all wheels) with a FE threshold of 30 mV.}
+\end{center}
+\end{figure}
+
+Also in this case, no clear trend of hit efficiency emerges from this analysis even though significant variations are visible, which should be traced back to causes different from atmospheric pressure.
+
+\addcontentsline{toc}{chapter}{Conclusions}
+\chapter*{Conclusions}
+The goal of this work was the investigation of the dependency of DT hit efficiency on atmospheric pressure, in order to find an explanation for the variations observed in 2017 and 2018.
+The first step of the work was the decoding of atmospheric pressure data provided by monitors in the experimental cavern of CMS in order to associate pressure information to the events in the analyzed datasets, and to choose the most suitable dataset for the analysis.
+We decided to use cosmic rays data, because they had been taken all over the year, in contrast with collision data (that concentrated in summer and fall), therefore they covered a wider range of atmospheric pressure values.
+
+First, we analyzed cosmic runs taken at nominal High Voltage.
+No trend of DT hit efficiency was observed.
+
+Next, we examined sets of runs taken at different HV values. In fact, at HV lower than nominal more significant variations of efficiency are expected.
+Actually, data taken at HV lower than nominal are more sensitive to different conditions and show larger variations, but again no trend of DT hit efficiency as a function of atmospheric pressure was found. 
+
+Since all these checks gave negative results, the present conclusion of this work is that the observed variations must be caused by conditions different from atmospheric pressure.
+
+%%%%%%%%%%%%%%%%
+\newpage
+\addcontentsline{toc}{chapter}{Bibliography}
+%\chapter*{References}
+
+\begin{thebibliography}{200}
+\bibitem{lumi_results} \url{https://twiki.cern.ch/twiki/bin/view/CMSPublic/LumiPublicResults}
+\bibitem {hi_lumi} Apollinari G. et al., \textit{High-Luminosity Large Hadron Collider (HL-LHC): Technical Design Report}, \href{<http://cds.cern.ch/record/2284929/files/40-39-PB.pdf?version=1>}{CERN Document Server}
+\bibitem{PhD} L. Guiducci, \textit{Design and Test of the Off-Detector Electronics for the CMS Barrel Muon Trigger}, Bologna, March 2006
+\bibitem{hit_eff} \url{https://twiki.cern.ch/twiki/bin/view/CMSPublic/MuonDPGPublic180622#DT_Hit_Efficiency}
+\bibitem{root} \url{https://root.cern.ch}
+
+\end{thebibliography}
+
+\end{document}
+%\bibitem{cms_es} \url{http://cms.ciemat.es}
+%\bibitem{p-p} CMS Collaboration, \textit{Performance of the CMS muon detector and muon reconstruction with proton-proton collisions at $\sqrt{s} = 13 TeV$}, \href{<https://arxiv.org/pdf/1804.04528v2.pdf>}{arXiv:1804.04528 [physics.ins-det]}
+%\bibitem{lumi} Werner Herr and Bruno Muratori, \textit{Concept of luminosity}, Geneva, 2006
+%\bibitem{lumi_coll_rate} James Gillies, \textit{Luminosity? Why don’t we just say collision rate?}, \href{<https://www.quantumdiaries.org/2011/03/02/why-don%E2%80%99t-we-just-say-collision-rate/>}{Quantum Diaries}, 2 March 2011
+%\bibitem{lhc_full} Rende Steerenberg, \textit{LHC Report: The LHC is full!}, \href{<https://home.cern/news/news/accelerators/lhc-report-lhc-full}{CERN News}, 15 May 2018
+%\bibitem{cern} \url{https://home.cern}
+%\bibitem{cms} \url{https://cms.cern}

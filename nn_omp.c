@@ -29,7 +29,7 @@
 #include <omp.h>
 #include <math.h>
 
-#define R 5
+#define R 3
 
 // Define struct to store inputs, weights and bias for each layer
 typedef struct {
@@ -40,42 +40,52 @@ typedef struct {
 } layer_t;
 
 // Print inputs, weights and bias for given layer to screen
-void print_layer(layer_t* l){
-	printf("inputs:\n");
-	for(int i=0; i<l->N; ++i){
-		printf("%lf\t", l->x[i]);
-	}
-	printf("\n");
-	printf("weights:\n");
-	for(int i=0; i<l->N * R; ++i){
-		printf("%lf\t", l->W[i]);
-	}
-	printf("\n");
-	printf("bias:\n");
-	printf("%lf\n", l->b);
+void print_layer(layer_t l){
+    printf("inputs:\n");
+    for(int i=0; i<l.N; ++i){
+        printf("%lf\t", l.x[i]);
+    }
+    printf("\n");
+    printf("weights:\n");
+    for(int i=0; i<(l.N-R+1) * R; ++i){
+        printf("%lf\t", l.W[i]);
+    }
+    printf("\n");
+    printf("bias:\n");
+    printf("%lf\n", l.b);
 }
 
 // Write inputs, weights and bias for given layer to file
-void write_layer(layer_t* l, char* filename){
+void write_layer(layer_t l, const char* filename){
     FILE* fptr = fopen(filename, "w");
 
     fprintf(fptr, "Inputs\n\n");
-    for(int i=0; i<l->N; ++i){
-        fprintf(fptr, "%lf\t", l->x[i]);
+    for(int i=0; i<l.N; ++i){
+        fprintf(fptr, "%lf\t", l.x[i]);
     }
     fprintf(fptr, "\n\n");
     fprintf(fptr, "Weights\n\n");
-    for(int i=0; i<l->N * R; ++i){
-        fprintf(fptr, "%lf\t", l->W[i]);
+    for(int i=0; i<(l.N-R+1) * R; ++i){
+        fprintf(fptr, "%lf\t", l.W[i]);
     }
     fprintf(fptr, "\n\n");
     fprintf(fptr, "Bias\n\n");
-    fprintf(fptr, "%lf\n", l->b);
+    fprintf(fptr, "%lf\n", l.b);
     fclose(fptr);
 }
 
+// Print array to screen
+void print_array(double* a, int n){
+
+    printf("Values\n\n");
+    for(int i=0; i<n; ++i){
+        printf("%lf\t", a[i]);
+    }
+    printf("\n");
+}
+
 // Write array to file
-void write_array(double* a, int n, char* filename){
+void write_array(double* a, int n, const char* filename){
     FILE* fptr = fopen(filename, "w");
 
     fprintf(fptr, "Values\n\n");
@@ -85,61 +95,12 @@ void write_array(double* a, int n, char* filename){
     fclose(fptr);
 }
 
+
 // Fill given array with random values in the range [0,1]
 void fill_array(double* array, int n){
 
-	for(int i=0; i<n; ++i)
-		array[i] = (double) rand() / RAND_MAX;
-}
-
-// Allocate memory to store input and weight arrays of each layer
-void initialize_network(int K, int N, layer_t* ls[K]){
-
-//	printf("Allocating memory...\n");
-	for(int k=0; k<K; ++k){
-        // Allocate memory for struct
-        ls[k] = (layer_t*)malloc(sizeof(layer_t));
-        // Allocate memory for # of input neurons
-        ls[k]->N = *(int*)malloc(sizeof(int));
-		// Set # of input neurons
-    	ls[k]->N = N - k * (R-1);
-    	// Allocate memory for input array
-		ls[k]->x = (double*)malloc(ls[k]->N * sizeof(double));
-		// Set # of weights (R elements for each output neuron)
-    	int w_N = (ls[k]->N-R+1) * R;
-		// Allocate memory for weights array
-  		ls[k]->W = (double*)malloc(w_N *sizeof(double));
-        // Allocate memory for bias
-        ls[k]->b = *(double*)malloc(sizeof(double));
-    }
-}
-
-void generate_values(int K, layer_t* ls[K]){
-
-//    printf("Generating input values, weights and biases...\n");
-    for(int k=0; k<K; ++k){
-        // Set # of weights (R elements for each output neuron)
-        int w_N = (ls[k]->N-R+1) * R;
-        // Fill weights
-        fill_array(ls[k]->W, w_N);
-        // Fill bias
-        ls[k]->b = (double) rand()/RAND_MAX;
-    }
-    // Fill input array for first layer with random values in the range [0,1]
-    fill_array(ls[0]->x, ls[0]->N);
-}
-
-void generate_network(int K, int N, layer_t* ls[K]){
-// Allocate memory and populate layers weights and bias with random values in the range [0,1]
-//    printf("Generating network...\n");
-
-    // Allocate memory
-    initialize_network(K, N, ls);
-
-    // Generate values
-    generate_values(K, ls);
-
-//    printf("Network generated.\n");
+    for(int i=0; i<n; ++i)
+        array[i] = (double) rand() / RAND_MAX;
 }
 
 
@@ -148,26 +109,23 @@ void activation(double* x){
 	*x = 1/(1 + exp(-*x));
 }
 
-void kernel(double* x, double* W, double b, int N, double* y){
+void kernel(layer_t l, double* out){
 // Kernel function: given layer (inputs, weights, bias),
 // compute the activations
 
     #pragma omp parallel for
     // Matrix multiplication
-    for(int i=0; i < N - R + 1; ++i){ // Loop over output neurons
-        y[i] = b; // Initialize to bias
+    for(int i=0; i < l.N-R+1; ++i){ // Loop over output neurons
+        out[i] = l.b; // Initialize to bias
         for(int j=0; j < R; ++j){
-            y[i] += (x[i + j] * W[i*R + j]); // MAC
+            out[i] += (l.x[i + j] * l.W[i*R + j]); // MAC
         }
-        activation(&y[i]);
+        activation(&(out[i]));
     }
-    // Free useless memory
-    free(x);
-    free(W);
 }
 
 // Define propagation function
-void forward(int K, layer_t* ls[K], double* output){
+void forward(layer_t* ls, int K, double* output){
 //  Compute activations, applying the kernel function
 //  to inputs, weights and biases of each layer, thus obtaining
 //  the activations which serve as input for the next one.
@@ -175,11 +133,11 @@ void forward(int K, layer_t* ls[K], double* output){
     // Loop over layers (except last one)
     for(int k=0; k < K-1; ++k){
         // Compute activations and store them as input for next layer
-        kernel(ls[k]->x, ls[k]->W, ls[k]->b, ls[k]->N, ls[k+1]->x);
+        kernel(ls[k], ls[k+1].x);
         
     }
     // Store last activations as output
-    kernel(ls[K-1]->x, ls[K-1]->W, ls[K-1]->b, ls[K-1]->N, output);
+    kernel(ls[K-1], output);
 }
 
 int main(int argc, char* argv[])
@@ -192,31 +150,51 @@ int main(int argc, char* argv[])
     if(argc>1) {	
     	N = atoi(argv[1]);
     	K = atoi(argv[2]);
-
     }
 
 	// Instantiate a struct for each layer to store inputs, weights and bias
-    layer_t** ls = malloc(K * sizeof(layer_t*));
+	// (plus one to store the final output)
+    layer_t ls[K];
 
+    // Allocate memory for output
+    size_t out_size = (N-K*R+K)*sizeof(double); // activations for last layer 
+    double* output = (double*)malloc(out_size); 
+    
 	// Set the seed
     srand(42);
 
+// GENERATE NETWORK
 	// Prepare the network: allocate memory, fill weights and bias, fill first layer's input
-    generate_network(K, N, ls);
+    int n, W_n;
+    for(int k=0; k<K; ++k){
+        n = N - k * (R-1); // # of inputs
+        W_n = (n-R+1)*R; // # of weights (R elements for each output neuron)
 
-    // Allocate memory for last output
-    double* output = (double*)malloc((N - K*R + K)*sizeof(double));
+        // Allocate memory
+        ls[k].x = (double*)malloc(n * sizeof(double)); // input
+        ls[k].W = (double*)malloc(W_n * sizeof(double)); // weights
+
+        // Fill values
+        ls[k].N = n; // # of input neurons
+        if(!k) fill_array(ls[k].x, n); // first input
+        fill_array(ls[k].W, W_n); // weights
+        ls[k].b = (double) rand()/RAND_MAX; // bias
+    }
+
+//    print_array(ls[0].x, N);
+//    print_array(ls[0].W, (N-R+1)*R);
 
 	// Set the start time
     tstart = hpc_gettime();
 	// Forward pass: compute activations for each layer, storing the result as input for the next one
-    forward(K, ls, output);
+    forward(ls, K, output);
     // Set the stop time
     tstop = hpc_gettime();
     // Print execution time
-    printf("Execution time %.2f\n", tstop - tstart);
+    printf("Execution time %.4f\n", tstop - tstart);
 
-    write_array(output, N- K*R + K, "omp.txt");
+    // Write last activations to file
+    write_array(output, N-K*R+K, "omp.txt");
 
     return EXIT_SUCCESS;
 }
