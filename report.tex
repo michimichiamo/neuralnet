@@ -20,17 +20,24 @@
 \usepackage[pdfpagelabels]{hyperref}
 \usepackage{fancyhdr}
 
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+\urlstyle{same}
+
 \begin{document}
 \hypersetup{pageanchor=false}
+\selectlanguage{english}
 
 \newpage\null\thispagestyle{empty}\newpage
 \begin{abstract}
-L'efficienza dei Drift Tubes di CMS è costantemente monitorata per verificare l'eventuale presenza di segnali di invecchiamento delle camere.
-Durante il 2017 e il 2018 non sono stati evidenziati chiari segnali di invecchiamento, ma si sono osservate variazioni inattese.
-In questa tesi è stata cercata una eventuale dipendenza dell'efficienza di singolo hit dalla pressione atmosferica, ritenuta possibile nel rivelatore a gas.
-Dai dati analizzati non è emersa una relazione chiara, indicando che le cause delle variazioni debbano essere ricercate altrove.
+This report describes two different C code implementations - the former making use of \href{https://www.openmp.org/}{OpenMP} and the latter of CUDA - of a simple multi-layer Neural Network. In particular, the aim of the present work is to exploit parallelization techniques in order to allow an efficient evaluation of the network.
+
 \end{abstract}
-\selectlanguage{english}
 \newpage\null\thispagestyle{empty}\newpage
 \tableofcontents
 
