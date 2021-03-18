@@ -1,0 +1,73 @@
+\documentclass[12pt,twoside,a4paper]{report}
+\usepackage[asymmetric]{geometry}
+\usepackage[english, italian]{babel}
+\selectlanguage{italian}
+\usepackage{newlfont}
+\usepackage[T1]{fontenc}
+\usepackage{selinput}
+\usepackage{color}
+\usepackage{amsmath}
+\numberwithin{equation}{section}
+\usepackage{textcomp}
+\pagestyle{headings}
+\textwidth=450pt\oddsidemargin=0pt
+\usepackage{caption}
+\captionsetup{format=hang, labelfont={bf}, figureposition=bottom, font=small} %
+\usepackage[pdftex]{graphicx}
+\usepackage{epstopdf}
+\DeclareGraphicsExtensions{.eps, .png, .pdf}
+\graphicspath{{./Immagini/}}
+\usepackage[pdfpagelabels]{hyperref}
+\usepackage{fancyhdr}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+\urlstyle{same}
+
+\begin{document}
+\hypersetup{pageanchor=false}
+\selectlanguage{english}
+
+\newpage\null\thispagestyle{empty}\newpage
+\begin{abstract}
+This report describes two different C code implementations - the former making use of \href{https://www.openmp.org/}{OpenMP} and the latter of \href{https://developer.nvidia.com/cuda-zone}{NVIDIA CUDA} - of a simple multi-layer Neural Network. In particular, the aim of the present work is to exploit parallelization techniques in order to allow an efficient evaluation of the network.
+
+\end{abstract}
+\newpage\null\thispagestyle{empty}\newpage
+\tableofcontents
+
+\newpage\null\thispagestyle{empty}\newpage
+\addcontentsline{toc}{chapter}{Introduction}
+\chapter*{Introduction}
+During 2017 and 2018 the Drift Tubes hit efficiency underwent unexpected and not yet understood variations. The hypothesis of chamber aging was quickly dismissed, but no other explanation has been found yet.
+The present work reports a research for a dependency of the efficiency on the atmospheric pressure.
+Chapter \ref{ch:LHC} outlines the major features of the Large Hadron Collider and describes the upgrade plans for the future, pointing out the need of this study in view of the impending changes.
+In Chapter \ref{ch:CMS} a closer look at the Compact Muon Solenoid experiment is given, along with a detailed description of the Drift Tubes sub-detector and its functioning.
+Chapter \ref{ch:aging} goes deeply into the study of efficiency, outlining the hypothesis behind the research for a dependence on atmospheric pressure. Furthermore, it gives details about the data analysis, the encountered issues alongside with the measures taken to solve them, and the results of the study.
+
+
+\newpage\null\thispagestyle{empty}\newpage
+\chapter{LHC and High Luminosity-LHC}
+
+\begin{thebibliography}{200}
+\bibitem{lumi_results} \url{https://twiki.cern.ch/twiki/bin/view/CMSPublic/LumiPublicResults}
+\bibitem {hi_lumi} Apollinari G. et al., \textit{High-Luminosity Large Hadron Collider (HL-LHC): Technical Design Report}, \href{<http://cds.cern.ch/record/2284929/files/40-39-PB.pdf?version=1>}{CERN Document Server}
+\bibitem{PhD} L. Guiducci, \textit{Design and Test of the Off-Detector Electronics for the CMS Barrel Muon Trigger}, Bologna, March 2006
+\bibitem{hit_eff} \url{https://twiki.cern.ch/twiki/bin/view/CMSPublic/MuonDPGPublic180622#DT_Hit_Efficiency}
+\bibitem{root} \url{https://root.cern.ch}
+
+\end{thebibliography}
+
+\end{document}
+%\bibitem{cms_es} \url{http://cms.ciemat.es}
+%\bibitem{p-p} CMS Collaboration, \textit{Performance of the CMS muon detector and muon reconstruction with proton-proton collisions at $\sqrt{s} = 13 TeV$}, \href{<https://arxiv.org/pdf/1804.04528v2.pdf>}{arXiv:1804.04528 [physics.ins-det]}
+%\bibitem{lumi} Werner Herr and Bruno Muratori, \textit{Concept of luminosity}, Geneva, 2006
+%\bibitem{lumi_coll_rate} James Gillies, \textit{Luminosity? Why don’t we just say collision rate?}, \href{<https://www.quantumdiaries.org/2011/03/02/why-don%E2%80%99t-we-just-say-collision-rate/>}{Quantum Diaries}, 2 March 2011
+%\bibitem{lhc_full} Rende Steerenberg, \textit{LHC Report: The LHC is full!}, \href{<https://home.cern/news/news/accelerators/lhc-report-lhc-full}{CERN News}, 15 May 2018
+%\bibitem{cern} \url{https://home.cern}
+%\bibitem{cms} \url{https://cms.cern}
