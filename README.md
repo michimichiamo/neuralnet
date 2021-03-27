@@ -16,7 +16,7 @@ Run with: ```./nn_cuda [N K]```
 Values default to N=500000, K=150
 
 ### Evaluation
-Bash scripts and ipython notebook used to assess the performance for both programs are provided inside the [evaluation](https://github.com/michimichiamo/neuralnet/blob/main/evaluation) folder
+Bash scripts and the ipython notebook used to assess the performance for both programs are provided inside the [evaluation](https://github.com/michimichiamo/neuralnet/blob/main/evaluation) folder. Instructions to run the files are provided within them.
 
 ### Report
 A brief report describing the work is provided inside the [report](https://github.com/michimichiamo/neuralnet/blob/main/report) folder. It includes the source LaTeX files as well as the [pdf](https://github.com/michimichiamo/neuralnet/blob/main/report/report.pdf), along with the plots used within the document.
