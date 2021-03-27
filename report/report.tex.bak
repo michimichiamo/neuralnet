@@ -49,7 +49,7 @@ This choice makes the code clearer and easier to read, along with allowing a sim
 
 \subsection*{Functions}
 The \textit{forward pass} of the network, i.e. the actual computation of the activations, is performed by the repeated call of the function \texttt{kernel()}, which is invoked $K$ times inside the \texttt{forward()} function. At each iteration, the latter takes care of storing the activations -- computed by the former -- as input for the following layer (namely in the corresponding \texttt{struct} for Program 1).
-Inside \texttt{kernel()}, a nested loop goes firstly through output neurons, initializes each activation to the bias value $b_{k}$ and then repeatedly updates it -- through MAC operations -- looping over the corresponding $R$ values of the input neurons.
+Inside \texttt{kernel()}, a nested loop goes firtly through output neurons, initializes each activation to the bias value $b_{k}$ and then repeatedly updates it -- through MAC operations -- looping over the corresponding $R$ values of the input neurons.
 
 \section{CPU implementation}
 \label{sec:omp}
@@ -117,7 +117,7 @@ Two different evaluation metrics were employed to assess the performance of the 
 \end{center}
 \end{figure}
 \begin{itemize}
-	\item \textbf{Throughput} was computed as $T\left(N_{processed}\right) = N_{processed}/{T_{GPU}}$, where $N_{processed}$ is the total number of processed data and $T_{GPU}$ is the execution time of Program 2. It gives information about the amount of data processed in the time unit, and is commonly used based on the fact that GPU parallel programming addresses acceleration aiming at performing \textit{a lot of} computations at the same time, rather than \textit{each single} computation faster.
+	\item \textbf{Throughput} was computed as $T\left(N_{processed}\right) = N_{processed}/{T_{GPU}}$, where $NN_{processed}$ is the total number of processed data and $T_{GPU}$ is the execution time of Program 2. It gives information about the amount of data processed in the time unit, and is commonly used based on the fact that GPU parallel programming addresses acceleration aiming at performing \textit{a lot of} computations at the same time, rather than \textit{each single} computation faster.
 	\item \textbf{Speedup with respect to the CPU implementation} was computed as $S\left(N\right) = T_{CPU}\left(N\right)/{T_{GPU}\left(N\right)}$, where $N$ is the usual first layer's input size and $T_{CPU}$ refers to the execution time of the CPU implementation \textit{exploiting all available processors}. This allows a fair comparison between the two implementations, avoiding spurious speedups being recorded.
 \end{itemize}
 \textbf{Throughput} is reported in Figure \ref{fig:cuda-throughput} and exhibits a logarithmic trend in $N$ -- evidenced by setting a logarithmic scale for the x-axis. This highlights that improvement provided by GPU parallelization grows more significantly when the GPU remains mainly unused -- and thus the additional effort for increasing the input size amounts to scheduling more blocks --, and less meaningfully as more \textit{SMs} become gradually active and allow to take more and more advantage of the computational power of the device.
