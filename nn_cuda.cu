@@ -22,7 +22,7 @@
 
 #define R 5
 #define BLKDIM 1024
-//#define NO_CUDA_CHECK_ERROR
+#define NO_CUDA_CHECK_ERROR
 
 // Define struct to store weights, bias and # of inputs for each layer
 typedef struct {

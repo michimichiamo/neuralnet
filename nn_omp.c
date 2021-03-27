@@ -51,7 +51,6 @@ void write_array(const double* a, const int n, const char* filename){
     fclose(fptr);
 }
 
-
 // Fill given array with random values in the range [0,1]
 void fill_array(double* array, int n){
     int i;
